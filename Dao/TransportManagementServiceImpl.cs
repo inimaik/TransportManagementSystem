@@ -8,7 +8,7 @@ using Utils;
 
 namespace Dao
 {
-    public class CRUDImplementation : IServiceProvider
+    public class TransportManagementServiceImpl : ITransportManagementService
     {
         private static string connectionString = DBPropertyUtil.GetConnectionString();
         SqlConnection con=DBConnUtil.GetDbConnection(connectionString);

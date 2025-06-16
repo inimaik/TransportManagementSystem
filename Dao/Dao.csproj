@@ -41,11 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CRUDImplementation.cs" />
-    <Compile Include="IServiceProvider.cs" />
+    <Compile Include="TransportManagementServiceImpl.cs" />
+    <Compile Include="ITransportManagementService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{ba33785c-8cfb-46d5-a39b-607b6d333283}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{4321c963-d877-453b-8e14-241cb5ac4ac6}</Project>
       <Name>Utils</Name>
