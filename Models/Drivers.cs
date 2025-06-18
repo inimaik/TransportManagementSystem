@@ -10,6 +10,7 @@ namespace Models
     {
         public int DriverID { get; set; }
         public string Name { get; set; }
+        public string LicenseNumber { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public int TripTypeID { get; set; } // Foreign key to TripTypes
