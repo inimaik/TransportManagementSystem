@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utils;
 using Models;
+using Exceptions;
 
 namespace Dao
 {
@@ -48,7 +49,7 @@ namespace Dao
                 int rowsAffected = cmd.ExecuteNonQuery();
                 return rowsAffected > 0;
             }
-            catch (Exception ex)
+            catch (VechileNotFoundException ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
                 return false;
@@ -68,7 +69,7 @@ namespace Dao
                 int rowsAffected = cmd.ExecuteNonQuery();
                 return rowsAffected > 0;
             }
-            catch (Exception ex)
+            catch (VechileNotFoundException ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
                 return false;
@@ -153,7 +154,7 @@ namespace Dao
                 int rowsAffected = cmd.ExecuteNonQuery();
                 return rowsAffected > 0;
             }
-            catch (Exception ex)
+            catch (BookingNotFoundException ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
                 return false;
