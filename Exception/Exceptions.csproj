@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BookingNotFoundException.cs" />
+    <Compile Include="DriverNotFoundException.cs" />
+    <Compile Include="TripNotFoundException.cs" />
     <Compile Include="VechileNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Exceptions;
+using Models;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utils;
-using Models;
-using Exceptions;
 
 namespace Dao
 {
@@ -14,7 +15,7 @@ namespace Dao
     {
         private static string connectionString = DBPropertyUtil.GetConnectionString();
         SqlConnection con=DBConnUtil.GetDbConnection(connectionString);
-        public bool AddVehicle(Vehicles vehicle)
+        public bool AddVehicle(Vehicle vehicle)
         {
             try
             {
@@ -27,6 +28,11 @@ namespace Dao
                 int rowsAffected = cmd.ExecuteNonQuery();
                 return rowsAffected > 0;
             }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Database error: " + ex.Message);
+                return false;
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
@@ -37,19 +43,29 @@ namespace Dao
                 con.Close();
             }
         }
-        public bool UpdateVehicle(Vehicles vehicle)
+        public bool UpdateVehicle(Vehicle vehicle)
         {
             try
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("UPDATE Vehicles SET Type = @Type, Capacity = @Capacity WHERE VehicleId = @VehicleId", con);
+                SqlCommand cmd = new SqlCommand("UPDATE Vehicles SET Type = @Type, Capacity = @Capacity, Status=@status WHERE VehicleId = @VehicleId", con);
                 cmd.Parameters.AddWithValue("@VehicleId", vehicle.VehicleID);
                 cmd.Parameters.AddWithValue("@Type", vehicle.Type);
                 cmd.Parameters.AddWithValue("@Capacity", vehicle.Capacity);
+                cmd.Parameters.AddWithValue("@Status", vehicle.Status);
                 int rowsAffected = cmd.ExecuteNonQuery();
+                if (rowsAffected == 0)
+                {
+                    throw new VechileNotFoundException("Vehicle not found with ID: " + vehicle.VehicleID);
+                }
                 return rowsAffected > 0;
             }
-            catch (VechileNotFoundException ex)
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Database error: " + ex.Message);
+                return false;
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
                 return false;
@@ -67,30 +83,15 @@ namespace Dao
                 SqlCommand cmd = new SqlCommand("DELETE FROM Vehicles WHERE VehicleId = @VehicleId", con);
                 cmd.Parameters.AddWithValue("@VehicleId", vehicleId);
                 int rowsAffected = cmd.ExecuteNonQuery();
+                if (rowsAffected == 0) { 
+                    throw new VechileNotFoundException("Vehicle not found with ID: " + vehicleId);
+                }
                 return rowsAffected > 0;
             }
-            catch (VechileNotFoundException ex)
+            catch (SqlException ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("Database error: " + ex.Message);
                 return false;
-            }
-            finally
-            {
-                con.Close();
-            }
-        }
-        public bool ScheduleTrip(int vehicleId, int routeId, string departureDate, string arrivalDate)
-        {
-            try
-            {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO Trips (VehicleId, RouteId, DepartureDate, ArrivalDate) VALUES (@VehicleId, @RouteId, @DepartureDate, @ArrivalDate)", con);
-                cmd.Parameters.AddWithValue("@VehicleId", vehicleId);
-                cmd.Parameters.AddWithValue("@RouteId", routeId);
-                cmd.Parameters.AddWithValue("@DepartureDate", departureDate);
-                cmd.Parameters.AddWithValue("@ArrivalDate", arrivalDate);
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
             }
             catch (Exception ex)
             {
@@ -102,15 +103,13 @@ namespace Dao
                 con.Close();
             }
         }
-        public bool CancelTrip(int tripId)
+        public bool ScheduleTrip(int vehicleId, int routeId, string departureDate, string arrivalDate) //Not completed
         {
             try
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("DELETE FROM Trips WHERE TripId = @TripId", con);
-                cmd.Parameters.AddWithValue("@TripId", tripId);
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
+                return true; //just a placeholder
+     
             }
             catch (Exception ex)
             {
@@ -122,17 +121,12 @@ namespace Dao
                 con.Close();
             }
         }
-        public bool BookTrip(int tripId, int passengerId, string bookingDate)
+        public bool CancelTrip(int tripId) //Not completed
         {
             try
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO Bookings (TripId, PassengerId, BookingDate) VALUES (@TripId, @PassengerId, @BookingDate)", con);
-                cmd.Parameters.AddWithValue("@TripId", tripId);
-                cmd.Parameters.AddWithValue("@PassengerId", passengerId);
-                cmd.Parameters.AddWithValue("@BookingDate", bookingDate);
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
+                return true; //just a placeholder
             }
             catch (Exception ex)
             {
@@ -144,15 +138,29 @@ namespace Dao
                 con.Close();
             }
         }
-        public bool CancelBooking(int bookingId)
+        public bool BookTrip(int tripId, int passengerId, string bookingDate)//Not completed
         {
             try
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("DELETE FROM Bookings WHERE BookingId = @BookingId", con);
-                cmd.Parameters.AddWithValue("@BookingId", bookingId);
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
+                return true; //just a placeholder
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+        public bool CancelBooking(int bookingId)//Not completed
+        {
+            try
+            {
+                con.Open();
+                return true; //just a placeholder
             }
             catch (BookingNotFoundException ex)
             {
@@ -168,55 +176,84 @@ namespace Dao
         {
             try
             {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("UPDATE Trips SET DriverId = @DriverId WHERE TripId = @TripId", con);
-                cmd.Parameters.AddWithValue("@TripId", tripId);
-                cmd.Parameters.AddWithValue("@DriverId", driverId);
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
+                using (var context = new TransportContext())
+                {
+                    var trip = context.Trips.SingleOrDefault(t => t.TripID == tripId);
+                    if (trip == null)
+                        throw new TripNotFoundException("Trip is not found: " + tripId);
+
+                    var driver = context.Drivers.SingleOrDefault(d => d.DriverId == driverId);
+                    if (driver == null)
+                        throw new DriverNotFoundException("Driver is not found: " + driverId);
+
+                    if (driver.Status != "Available" || trip.DriverId != null)
+                        return false;
+                    var conflictingTrip = context.Trips
+                                                 .Where(t => t.DriverId == driverId && t.TripID != tripId)
+                                                 .Any(t =>
+                                                          t.DepartureDate < trip.ArrivalDate &&
+                                                          t.ArrivalDate > trip.DepartureDate
+                );
+
+                    if (conflictingTrip)
+                        return false;
+
+                    trip.DriverId = driverId;
+                    driver.Status = "On Trip";
+
+                    context.SaveChanges();
+                    return true;
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("Error during driver allocation: " + ex.Message);
                 return false;
-            }
-            finally
-            {
-                con.Close();
             }
         }
         public bool DeallocateDriver(int tripId)
         {
             try
             {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("UPDATE Trips SET DriverId = NULL WHERE TripId = @TripId", con);
-                cmd.Parameters.AddWithValue("@TripId", tripId);
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
+                using (var context = new TransportContext())
+                {
+                    var trip = context.Trips.SingleOrDefault(t => t.TripID == tripId);
+                    if (trip == null)
+                        throw new TripNotFoundException($"Trip not found: {tripId}");
+
+                    if (trip.DriverId == null)
+                        return false; // No driver to deallocate
+
+                    var driver = context.Drivers.SingleOrDefault(d => d.DriverId == trip.DriverId);
+                    if (driver == null)
+                        throw new DriverNotFoundException($"Driver not found: {trip.DriverId}");
+
+                    trip.DriverId = null;
+                    driver.Status = "Available";
+
+                    context.SaveChanges();
+                    return true;
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("Error during driver deallocation: " + ex.Message);
                 return false;
             }
-            finally
-            {
-                con.Close();
-            }
         }
-        public List<Bookings> GetBookingsByPassenger(int passengerId)
+        public List<Booking> GetBookingsByPassenger() //int passengerId) //Not completed
         {
-            List<Bookings> bookings = new List<Bookings>();
+            List<Booking> bookings = new List<Booking>();
             try
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Bookings WHERE PassengerId = @PassengerId", con);
-                cmd.Parameters.AddWithValue("@PassengerId", passengerId);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Bookings", con);
+
+                //cmd.Parameters.AddWithValue("@PassengerId", passengerId);
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    Bookings booking = new Bookings
+                    Booking booking = new Booking
                     {
                         BookingID = reader.GetInt32(0),
                         TripID = reader.GetInt32(1),
@@ -237,9 +274,9 @@ namespace Dao
             }
             return bookings;
         }
-        public List<Bookings> GetBookingsByTrip(int tripId)
+        public List<Booking> GetBookingsByTrip(int tripId)//Not Completed
         {
-            List<Bookings> bookings = new List<Bookings>();
+            List<Booking> bookings = new List<Booking>();
             try
             {
                 con.Open();
@@ -248,7 +285,7 @@ namespace Dao
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    Bookings booking = new Bookings
+                    Booking booking = new Booking
                     {
                         BookingID = reader.GetInt32(0),
                         TripID = reader.GetInt32(1),
@@ -268,35 +305,22 @@ namespace Dao
             }
             return bookings;
         }
-        public List<Drivers> GetAvailableDrivers()
+        public List<Driver> GetAvailableDrivers()
         {
-            List<Drivers> drivers = new List<Drivers>();
             try
             {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Drivers WHERE Status = 'Available'", con);
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (var context = new TransportContext())
                 {
-                    Drivers driver = new Drivers
-                    {
-                        DriverID = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        LicenseNumber = reader.GetString(2),
-                        Status = reader.GetString(3)
-                    };
-                    drivers.Add(driver);
+                    return context.Drivers
+                                  .Where(d => d.Status == "Available")
+                                  .ToList();
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("Error retrieving available drivers: " + ex.Message);
+                return new List<Driver>(); // return empty list on failure
             }
-            finally
-            {
-                con.Close();
-            }
-            return drivers;
         }
     }
 }

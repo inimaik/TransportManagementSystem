@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,13 +44,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bookings.cs" />
-    <Compile Include="Drivers.cs" />
-    <Compile Include="Passengers.cs" />
+    <Compile Include="Booking.cs" />
+    <Compile Include="Driver.cs" />
+    <Compile Include="Passenger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Routes.cs" />
-    <Compile Include="Trips.cs" />
-    <Compile Include="Vehicles.cs" />
+    <Compile Include="Route.cs" />
+    <Compile Include="Trip.cs" />
+    <Compile Include="Vehicle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

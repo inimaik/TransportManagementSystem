@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Models
 {
-    public class Trips
+    public class Trip
     {
         public int TripID { get; set; }
         public int VehicleID { get; set; }
@@ -15,6 +16,14 @@ namespace Models
         public DateTime ArrivalDate { get; set; }
         public string Status { get; set; } // Scheduled, In Progress, Completed, Cancelled
         public string TripType { get; set; } = "Freight"; // Freight, Passenger
-        public int? MaxPassengers { get; set; } // Nullable for freight trips
+        public int MaxPassengers { get; set; } // Nullable for freight trips
+        
+        //Drivers table is added using EF approach
+        //foreign key added using EF approach after driver table creation
+        [ForeignKey("Drivers")]
+        public int? DriverId { get; set; }
+        public Driver Drivers { get; set; }
+        
+
     }
 }

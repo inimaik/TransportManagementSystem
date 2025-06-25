@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class Routes
+    public class Route
     {
         public int RouteID { get; set; }
         public string StartDestination { get; set; }

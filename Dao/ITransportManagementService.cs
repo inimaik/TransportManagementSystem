@@ -9,8 +9,8 @@ namespace Dao
 {
     public interface ITransportManagementService
     {
-        bool AddVehicle(Vehicles vehicle);
-        bool UpdateVehicle(Vehicles vehicle);
+        bool AddVehicle(Vehicle vehicle);
+        bool UpdateVehicle(Vehicle vehicle);
         bool DeleteVehicle(int vehicleId);
         bool ScheduleTrip(int vehicleId, int routeId, string departureDate, string arrivalDate);
         bool CancelTrip(int tripId);
@@ -18,9 +18,9 @@ namespace Dao
         bool CancelBooking(int bookingId);
         bool AllocateDriver(int tripId, int driverId);
         bool DeallocateDriver(int tripId);
-        List<Bookings> GetBookingsByPassenger(int passengerId);
-        List<Bookings> GetBookingsByTrip(int tripId);
-        List<Drivers> GetAvailableDrivers();
+        List<Booking> GetBookingsByPassenger(); //int passengerId);
+        List<Booking> GetBookingsByTrip(int tripId);
+        List<Driver> GetAvailableDrivers();
 
     }
 }
