@@ -18,7 +18,7 @@ namespace Dao
         bool CancelBooking(int bookingId);
         bool AllocateDriver(int tripId, int driverId);
         bool DeallocateDriver(int tripId);
-        List<Booking> GetBookingsByPassenger(); //int passengerId);
+        List<Booking> GetBookingsByPassenger(int passengerId);
         List<Booking> GetBookingsByTrip(int tripId);
         List<Driver> GetAvailableDrivers();
 
