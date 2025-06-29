@@ -43,8 +43,10 @@
   <ItemGroup>
     <Compile Include="BookingNotFoundException.cs" />
     <Compile Include="DriverNotFoundException.cs" />
+    <Compile Include="PassengerNotFoundException.cs" />
+    <Compile Include="RouteNotFoundException.cs" />
     <Compile Include="TripNotFoundException.cs" />
-    <Compile Include="VechileNotFoundException.cs" />
+    <Compile Include="VehicleNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

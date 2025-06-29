@@ -15,7 +15,6 @@ namespace Dao
         {
         }
         public DbSet<Driver> Drivers { get; set; }
-        //trips..not sure abt logic..lets figure out later(figured it)
         public DbSet<Trip> Trips { get; set; }
     }
 }

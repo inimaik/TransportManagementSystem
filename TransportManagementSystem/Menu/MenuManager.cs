@@ -1,11 +1,12 @@
-﻿using Exceptions;
+﻿using Dao;
+using MyExceptions;
 using Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dao;
 
 namespace TransportManagementSystem.Menu
 {
@@ -42,7 +43,7 @@ namespace TransportManagementSystem.Menu
         #endregion
 
         #region TripMenu
-        public void ShowTripMenu()//handle input and exceptions too
+        public void ShowTripMenu()
         {
             while (true)
             {
@@ -77,14 +78,11 @@ namespace TransportManagementSystem.Menu
                         {
                             Console.Clear();
                             WriteCentered("Schedule Trip");
+                            int vehicleId = GetIntInput("Enter Vehicle ID: ");
 
-                            Console.Write("Enter Vehicle ID: ");
-                            int vehicleId = int.Parse(Console.ReadLine());
+                            int routeId = GetIntInput("Enter Route ID: ");
 
-                            Console.Write("Enter Route ID: ");
-                            int routeId = int.Parse(Console.ReadLine());
-
-                            Console.Write("Enter Departure Date (yyyy-MM-dd): ");
+                            Console.Write("Enter Departure Date (yyyy-MM-dd): ");//handle dates if necessary
                             string departureDate = Console.ReadLine();
 
                             Console.Write("Enter Arrival Date (yyyy-MM-dd): ");
@@ -95,13 +93,31 @@ namespace TransportManagementSystem.Menu
                             Console.WriteLine(scheduled ? "Trip scheduled successfully." : "Failed to schedule trip.");
                             Console.ResetColor();
                         }
-                        catch (VechileNotFoundException ex)
+                        catch (VehicleNotFoundException ex)
                         {
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
                         }
-                        //ScheduleTrip()
-                        WriteCentered("Schedule Trip selected...");
-
+                        catch (RouteNotFoundException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        WriteCentered("Returning ");
                         break;
                     case "2":
                         try
@@ -109,8 +125,7 @@ namespace TransportManagementSystem.Menu
                             Console.Clear();
                             WriteCentered("Cancel Trip");
 
-                            Console.Write("Enter Trip ID: ");
-                            int tripId = int.Parse(Console.ReadLine());
+                            int tripId = GetIntInput("Enter Trip ID: ");
 
                             bool canceled = service.CancelTrip(tripId);
                             Console.ForegroundColor = canceled ? ConsoleColor.Green : ConsoleColor.Red;
@@ -119,12 +134,27 @@ namespace TransportManagementSystem.Menu
                         }
                         catch (TripNotFoundException ex)
                         {
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
                         }
-                        //CancelTrip()
-                        WriteCentered("Cancel Trip  selected...");
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+
+                        WriteCentered("Returning");
                         break;
                     case "3":
+                        WriteCentered("Returning to main menu...");
                         return;
                     default:
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -133,14 +163,14 @@ namespace TransportManagementSystem.Menu
                         break;
                 }
 
-                Console.WriteLine("\nPress any key to return...");
+                Console.WriteLine("\nPress any key to return...");//will decide whether to keep it
                 Console.ReadKey();
             }
         } 
         #endregion
 
         #region VehicleMenu
-        public void ShowVehicleMenu()//handle input and exceptions too
+        public void ShowVehicleMenu()
         {
             while (true)
             {
@@ -172,32 +202,48 @@ namespace TransportManagementSystem.Menu
                 switch (input)
                 {
                     case "1":
-                        Console.Clear();
-                        WriteCentered("Add Vehicle");
-                        Vehicle newVehicle = new Vehicle();
+                        try
+                        {
+                            Vehicle newVehicle = new Vehicle();
 
-                        Console.Write("Enter Vehicle ID: ");
-                        newVehicle.VehicleID = int.Parse(Console.ReadLine());
+                            newVehicle.VehicleID = GetIntInput("Enter Vehicle ID: ");
 
-                        Console.Write("Enter Vehicle Model: ");
-                        newVehicle.Model = Console.ReadLine();
+                            Console.Write("Enter Vehicle Model: ");
+                            newVehicle.Model = Console.ReadLine();
 
-                        Console.Write("Enter Vehicle Type: ");
-                        newVehicle.Type = Console.ReadLine();
+                            Console.Write("Enter Vehicle Type: ");
+                            newVehicle.Type = Console.ReadLine();
 
-                        Console.Write("Enter Capacity: ");
-                        newVehicle.Capacity = int.Parse(Console.ReadLine());
+                            Console.Write("Enter Capacity: ");
+                            newVehicle.Capacity = GetIntInput("Enter Capactity: ");
 
-                        Console.Write("Enter Status");
-                        newVehicle.Status = Console.ReadLine();
+                            Console.Write("Enter Status: ");
+                            newVehicle.Status = Console.ReadLine();
 
-
-                        bool added = service.AddVehicle(newVehicle);
-                        Console.ForegroundColor = added ? ConsoleColor.Green : ConsoleColor.Red;
-                        Console.WriteLine(added ? "Vehicle added successfully." : "Failed to add vehicle.");
-                        Console.ResetColor();
-                        //AddVehicle()
-                        WriteCentered("Add Vehicle selected...");
+                            bool added = service.AddVehicle(newVehicle);
+                            Console.ForegroundColor = added ? ConsoleColor.Green : ConsoleColor.Red;
+                            Console.WriteLine(added ? "Vehicle added successfully." : "Failed to add vehicle.");
+                            Console.ResetColor();
+                        }
+                        catch (FormatException ex)// check if this is necessary
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("Input error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        WriteCentered("Returning back");
                         break;
                     case "2":
                         try
@@ -206,17 +252,15 @@ namespace TransportManagementSystem.Menu
                             WriteCentered("Update Vehicle");
                             Vehicle updatedVehicle = new Vehicle();
 
-                            Console.Write("Enter Vehicle ID to update: ");
-                            updatedVehicle.VehicleID = int.Parse(Console.ReadLine());
+                            updatedVehicle.VehicleID = GetIntInput("Enter Vehicle ID to update: ");
                             Console.Write("Enter Vehicle Model: ");
                             updatedVehicle.Model = Console.ReadLine();
 
                             Console.Write("Enter New Type: ");
                             updatedVehicle.Type = Console.ReadLine();
 
-                            Console.Write("Enter New Capacity: ");
-                            updatedVehicle.Capacity = int.Parse(Console.ReadLine());
-                            Console.Write("Enter Status");
+                            updatedVehicle.Capacity = GetIntInput("Enter new Capacity: ");
+                            Console.Write("Enter Status: ");
                             updatedVehicle.Status = Console.ReadLine();
 
                             bool updated = service.UpdateVehicle(updatedVehicle);
@@ -224,35 +268,56 @@ namespace TransportManagementSystem.Menu
                             Console.WriteLine(updated ? "Vehicle updated successfully." : "Vehicle update failed.");
                             Console.ResetColor();
                         }
-                        catch (VechileNotFoundException ex)
+                        catch (VehicleNotFoundException ex)
                         {
                             Console.WriteLine(ex.Message);
                         }
-                        //UpdateVehicle()
-                        WriteCentered("Update Vehicle selected...");
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        WriteCentered("Returning");
                         break;
                     case "3":
                         try
                         {
                             Console.Clear();
                             WriteCentered("Delete Vehicle");
-                            Console.Write("Enter Vehicle ID to delete: ");
-                            int id = int.Parse(Console.ReadLine());
+                            int id = GetIntInput("Vehicle ID to delete: ");
 
                             bool deleted = service.DeleteVehicle(id);
                             Console.ForegroundColor = deleted ? ConsoleColor.Green : ConsoleColor.Red;
                             Console.WriteLine(deleted ? "Vehicle deleted." : "Failed to delete vehicle.");
                             Console.ResetColor();
-
                         }
-                        catch (VechileNotFoundException ex)
+                        catch (VehicleNotFoundException ex)
                         {
                             Console.WriteLine(ex.Message);
                         }
-                        //DeleteVehicle()
-                        WriteCentered("Delete Vehicle selected...");
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        WriteCentered("Returning");
                         break;
                     case "4":
+                        WriteCentered("Returning to main menu...");
                         return;
                     default:
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -260,12 +325,12 @@ namespace TransportManagementSystem.Menu
                         Console.ResetColor();
                         break;
                 }
-
-                Console.WriteLine("\nPress any key to return...");
+                Console.WriteLine("\nPress any key to return...");// will decide later based on ui
                 Console.ReadKey();
             }
         } 
         #endregion
+
         #region BookingMenu
         public void ShowBookingMenu()
         {
@@ -300,24 +365,54 @@ namespace TransportManagementSystem.Menu
                 switch (input)
                 {
                     case "1":
-                        Console.Clear();
-                        WriteCentered("Book Trip");
+                        try
+                        {
+                            Console.Clear();
+                            WriteCentered("Book Trip");
 
-                        Console.Write("Enter Trip ID: ");
-                        int tripId = int.Parse(Console.ReadLine());
+                            int tripId = GetIntInput("Enter Trip ID: ");
 
-                        Console.Write("Enter Passenger ID: ");
-                        int passengerId = int.Parse(Console.ReadLine());
+                            int passengerId = GetIntInput("Enter Passenger ID: ");
 
-                        Console.Write("Enter Booking Date (yyyy-MM-dd): ");
-                        string bookingDate = Console.ReadLine();
+                            Console.Write("Enter Booking Date (yyyy-MM-dd): ");
+                            string bookingDate = Console.ReadLine();
 
-                        bool booked = service.BookTrip(tripId, passengerId, bookingDate);
-                        Console.ForegroundColor = booked ? ConsoleColor.Green : ConsoleColor.Red;
-                        Console.WriteLine(booked ? "Trip booked successfully." : "Failed to book trip.");
-                        Console.ResetColor();
-                        //BookTrip()
-                        WriteCentered("BookTrip selected...");
+                            bool booked = service.BookTrip(tripId, passengerId, bookingDate);
+                            Console.ForegroundColor = booked ? ConsoleColor.Green : ConsoleColor.Red;
+                            Console.WriteLine(booked ? "Trip booked successfully." : "Failed to book trip.");
+                            Console.ResetColor();
+                        }
+                        catch(TripNotFoundException ex) {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
+                        }
+                        catch (PassengerNotFoundException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
+                        }
+                        catch (SqlException ex) when (ex.Number == 2627) // Unique constraint violation
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Passenger has already booked this trip.");
+                            Console.ResetColor();
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        
+                        WriteCentered("Returning");
                         break;
                     case "2":
                         try
@@ -325,31 +420,137 @@ namespace TransportManagementSystem.Menu
                             Console.Clear();
                             WriteCentered("Cancel Booking");
 
-                            Console.Write("Enter Booking ID to cancel: ");
-                            int bookingId = int.Parse(Console.ReadLine());
+                            int bookingId = GetIntInput("Enter Booking ID to cancel: ");
 
                             bool canceled = service.CancelBooking(bookingId);
                             Console.ForegroundColor = canceled ? ConsoleColor.Green : ConsoleColor.Red;
                             Console.WriteLine(canceled ? "Booking canceled." : "Failed to cancel booking.");
                             Console.ResetColor();
-                            break;
                         }
                         catch (BookingNotFoundException ex)
                         {
-                            Console.WriteLine(ex.Message);
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
                         }
-                        //CancelBooking()
-                        WriteCentered("Cancel Booking selected...");
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        WriteCentered("Returning");
                         break;
                     case "3":
-                        //GetBookingsbyPassenger()
-                        WriteCentered("Display Bookings by Passenger selected...");
+                        try
+                        {
+                            Console.Clear();
+                            WriteCentered("View Bookings by Passenger");
+
+                            int passengerId = GetIntInput("Enter Passenger ID: ");
+                            List<Booking> bookings = service.GetBookingsByPassenger(passengerId);
+
+                            if (bookings.Count == 0)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                WriteCentered("No bookings found for this passenger.");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                WriteCentered("Bookings Found:");
+                                Console.ResetColor();
+                                Console.WriteLine("----------------------------------------------------");
+                                Console.WriteLine("BookingID | TripID | PassengerID |   Date   | Status");// can be adjusted
+                                Console.WriteLine("----------------------------------------------------");
+
+                                foreach (var booking in bookings)
+                                {
+                                    Console.WriteLine($"   {booking.BookingID}   |   {booking.TripID}   |      {booking.PassengerID}      |  {booking.BookingDate:yyyy-MM-dd}  | {booking.Status}");
+                                }
+                            }
+                        }
+                        catch (PassengerNotFoundException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+
+                        WriteCentered("Returning...");
                         break;
                     case "4":
-                        //GetBookingsbyTrip()
-                        WriteCentered("Display Bookings by Trip selected...");
+                        try
+                        {
+                            Console.Clear();
+                            WriteCentered("View Bookings by Trip");
+
+                            int tripId = GetIntInput("Enter Trip ID: ");
+                            List<Booking> bookings = service.GetBookingsByTrip(tripId);
+
+                            if (bookings.Count == 0)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                WriteCentered("No bookings found for this trip.");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                WriteCentered("Bookings Found:");
+                                Console.ResetColor();
+                                Console.WriteLine("----------------------------------------------------");
+                                Console.WriteLine("BookingID | TripID | PassengerID |   Date   | Status");// can be adjusted
+                                Console.WriteLine("----------------------------------------------------");
+
+                                foreach (var booking in bookings)
+                                {
+                                    Console.WriteLine($"   {booking.BookingID}   |   {booking.TripID}   |      {booking.PassengerID}      |  {booking.BookingDate:yyyy-MM-dd}  | {booking.Status}");
+                                }
+                            }
+                        }
+                        catch (TripNotFoundException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+
+                        WriteCentered("Returning...");
                         break;
                     case "5":
+                        WriteCentered("Returning to main menu...");
                         return;
                     default:
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -358,11 +559,12 @@ namespace TransportManagementSystem.Menu
                         break;
                 }
 
-                Console.WriteLine("\nPress any key to return...");
+                Console.WriteLine("\nPress any key to return..."); //will decide whether to keep it
                 Console.ReadKey();
             }
         } 
         #endregion
+
         #region DriverMenu
         public void ShowDriverMenu()//handle input and exceptions too
         {
@@ -401,11 +603,9 @@ namespace TransportManagementSystem.Menu
                             Console.Clear();
                             WriteCentered("Allocate Driver to Trip");
 
-                            Console.Write("Enter Trip ID: ");
-                            int tripId = int.Parse(Console.ReadLine());
+                            int tripId = GetIntInput("Enter Trip ID: ");
 
-                            Console.Write("Enter Driver ID: ");
-                            int driverId = int.Parse(Console.ReadLine());
+                            int driverId = GetIntInput("Enter Driver ID: ");
 
                             bool allocated = service.AllocateDriver(tripId, driverId);
                             Console.ForegroundColor = allocated ? ConsoleColor.Green : ConsoleColor.Red;
@@ -414,10 +614,36 @@ namespace TransportManagementSystem.Menu
                         }
                         catch (TripNotFoundException ex)
                         {
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
                         }
-                        WriteCentered("AllocateDriver selected...");
-                        //AllocateDriver()
+                        catch(DriverNotFoundException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
+                        }
+                        catch(InvalidOperationException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+
+                        WriteCentered("Returning");
                         break;
                     case "2":
                         try
@@ -425,8 +651,7 @@ namespace TransportManagementSystem.Menu
                             Console.Clear();
                             WriteCentered("Deallocate Driver from Trip");
 
-                            Console.Write("Enter Trip ID: ");
-                            int tripId = int.Parse(Console.ReadLine());
+                            int tripId = GetIntInput("Enter Trip ID: ");
 
                             bool deallocated = service.DeallocateDriver(tripId);
                             Console.ForegroundColor = deallocated ? ConsoleColor.Green : ConsoleColor.Red;
@@ -435,42 +660,82 @@ namespace TransportManagementSystem.Menu
                         }
                         catch (TripNotFoundException ex)
                         {
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
                         }
-                        //DeallocateDriver()
-                        WriteCentered("DeallocateDriver selected...");
+                        catch (DriverNotFoundException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ResetColor();
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        
+                        WriteCentered("Returning");
                         break;
                     case "3":
                         try
                         {
                             Console.Clear();
-                            WriteCentered("Available Drivers");
+                            WriteCentered("View Available Drivers");
 
-                            List<Driver> availableDrivers = service.GetAvailableDrivers();
-
-                            if (availableDrivers.Count == 0)
+                            List<Driver> drivers = service.GetAvailableDrivers()
+                            if (drivers.Count == 0)
                             {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("No available drivers found.");
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                WriteCentered("No available drivers found.");
+                                Console.ResetColor();
                             }
                             else
                             {
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                foreach (var driver in availableDrivers)
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                WriteCentered("Available Drivers:");
+                                Console.ResetColor();
+                                Console.WriteLine("----------------------------------------------------");
+                                Console.WriteLine("DriverID |     Name     |  License Number |  Status ");
+                                Console.WriteLine("----------------------------------------------------");
+
+                                foreach (var driver in drivers)
                                 {
-                                    Console.WriteLine($"Driver ID: {driver.DriverId}, Name: {driver.Name}, License: {driver.LicenseNumber}");
+                                    Console.WriteLine($" {driver.DriverId} | {driver.Name} | {driver.LicenseNumber} | {driver.Status}");
                                 }
                             }
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
                             Console.ResetColor();
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"Error: {ex.Message}");
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
                         }
-                        //GetAvailableDriver()
-                        WriteCentered("GetAvailableDriver selected...");
+
+                        WriteCentered("Returning...");
                         break;
                     case "4":
+                        WriteCentered("Returning to main menu...");
                         return;
                     default:
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -479,7 +744,7 @@ namespace TransportManagementSystem.Menu
                         break;
                 }
 
-                Console.WriteLine("\nPress any key to return...");
+                Console.WriteLine("\nPress any key to return...");//Will decide if it needs to be kept
                 Console.ReadKey();
             }
         } 
@@ -502,6 +767,7 @@ namespace TransportManagementSystem.Menu
                 Console.WriteLine();
         }
         #endregion
+
         #region ChoiceValidation
         public int ReadChoice(int min, int max)
         {
@@ -525,6 +791,19 @@ namespace TransportManagementSystem.Menu
                     Console.ResetColor();
                 }
             }
+        }
+        #endregion
+
+        #region GetIntInput
+        public int GetIntInput(string message)
+        {
+            Console.Write(message);
+            int value;
+            while (!int.TryParse(Console.ReadLine(), out value))
+            {
+                Console.Write("Invalid input. Enter a number: ");
+            }
+            return value;
         } 
         #endregion
     }

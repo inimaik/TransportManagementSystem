@@ -1,5 +1,5 @@
 ﻿using Dao;
-using Exceptions;
+using MyExceptions;
 using Models;
 using NUnit.Framework;
 using System;
@@ -22,8 +22,8 @@ namespace UnitTesting
             [Test]
             public void TestAllocateDriver_Success()
             {
-                int tripId = 1;    // Assume exists
-                int driverId = 1; // Assume available
+                int tripId = 1;  
+                int driverId = 1; 
 
                 bool result = service.AllocateDriver(tripId, driverId);
 
@@ -57,8 +57,8 @@ namespace UnitTesting
             [Test]
             public void TestBookTrip_Success()
             {
-                int tripId = 1;           // Assume valid scheduled trip
-                int passengerId = 1;   // Assume valid
+                int tripId = 1;   
+                int passengerId = 1;
                 string bookingDate = "2025-06-26";
 
                 bool result = service.BookTrip(tripId, passengerId, bookingDate);
@@ -71,7 +71,7 @@ namespace UnitTesting
             {
                 Vehicle vehicle = new Vehicle
                 {
-                    VehicleID = 9999, // Assume this ID does not exist
+                    VehicleID = 9999, //ID does not exist
                     Model="Tata Truck",
                     Type = "Truck",
                     Capacity = 10,
@@ -79,7 +79,7 @@ namespace UnitTesting
                 };
 
                 // Act + Assert
-                Assert.Throws<VechileNotFoundException>(() => service.UpdateVehicle(vehicle));
+                Assert.Throws<VehicleNotFoundException>(() => service.UpdateVehicle(vehicle));
             }
 
             [Test]

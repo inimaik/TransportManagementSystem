@@ -70,9 +70,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Exception\Exceptions.csproj">
+    <ProjectReference Include="..\Exception\MyExceptions.csproj">
       <Project>{51dedbf3-97de-4dbc-b3dd-c99fd707e31b}</Project>
-      <Name>Exceptions</Name>
+      <Name>MyExceptions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{ba33785c-8cfb-46d5-a39b-607b6d333283}</Project>

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Exceptions
+namespace MyExceptions
 {
-    public class VechileNotFoundException: Exception
+    public class VehicleNotFoundException: Exception
     {
-        public VechileNotFoundException(string message) : base(message)
+        public VehicleNotFoundException(string message) : base(message)
         { 
            
         }

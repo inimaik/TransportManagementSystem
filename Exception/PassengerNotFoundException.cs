@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace MyExceptions
 {
-    public class TripNotFoundException : Exception
+    public class PassengerNotFoundException : Exception
     {
-        public TripNotFoundException(string message) : base(message)
+        public PassengerNotFoundException(string message) : base(message)
         {
 
         }
-      
     }
 }
