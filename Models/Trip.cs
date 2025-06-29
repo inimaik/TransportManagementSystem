@@ -16,7 +16,7 @@ namespace Models
         public DateTime ArrivalDate { get; set; }
         public string Status { get; set; } // Scheduled, In Progress, Completed, Cancelled
         public string TripType { get; set; } = "Freight"; // Freight, Passenger
-        public int MaxPassengers { get; set; } // Nullable for freight trips
+        public int MaxPassengers { get; set; }
         
         //Drivers table is added using EF approach
         //foreign key added using EF approach after driver table creation

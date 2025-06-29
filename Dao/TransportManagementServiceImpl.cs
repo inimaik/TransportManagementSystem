@@ -124,16 +124,34 @@ namespace Dao
             using (SqlConnection con = DBConnUtil.GetDbConnection(connectionString))
             {
                 con.Open();
+                //get vehicle Id
+                SqlCommand getVehicleCmd = new SqlCommand("SELECT VehicleID FROM Trips WHERE TripID = @TripID", con);
+                getVehicleCmd.Parameters.AddWithValue("@TripID", tripId);
+                object vehicleIdObj = getVehicleCmd.ExecuteScalar();
+
+                if (vehicleIdObj == null)
+                {
+                    throw new TripNotFoundException("Trip not found with ID: " + tripId);
+                }
+
+                int vehicleId = (int)vehicleIdObj;
+
+                //Cancel the Trip
                 SqlCommand cmd = new SqlCommand("UPDATE Trips SET Status = 'Cancelled' WHERE TripID = @TripID", con);
                 cmd.Parameters.AddWithValue("@TripID", tripId);
                 int rowsAffected = cmd.ExecuteNonQuery();
 
                 if (rowsAffected == 0)
                 {
-                    throw new TripNotFoundException("Trip not found with ID: " + tripId);
+                    throw new TripNotFoundException("Trip cancellation failed for ID: " + tripId);
                 }
 
-                return true;
+                //Free the vehicle
+                SqlCommand updateVehicleCmd = new SqlCommand("UPDATE Vehicles SET Status = 'Available' WHERE VehicleID = @VehicleID", con);
+                updateVehicleCmd.Parameters.AddWithValue("@VehicleID", vehicleId);
+                int vehicleRows = updateVehicleCmd.ExecuteNonQuery();
+
+                return rowsAffected > 0 && vehicleRows > 0;
             }
         }
         #endregion

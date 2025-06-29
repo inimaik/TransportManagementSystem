@@ -82,7 +82,7 @@ namespace TransportManagementSystem.Menu
 
                             int routeId = GetIntInput("Enter Route ID: ");
 
-                            Console.Write("Enter Departure Date (yyyy-MM-dd): ");//handle dates if necessary
+                            Console.Write("Enter Departure Date (yyyy-MM-dd): ");
                             string departureDate = Console.ReadLine();
 
                             Console.Write("Enter Arrival Date (yyyy-MM-dd): ");
@@ -697,7 +697,7 @@ namespace TransportManagementSystem.Menu
                             Console.Clear();
                             WriteCentered("View Available Drivers");
 
-                            List<Driver> drivers = service.GetAvailableDrivers()
+                            List<Driver> drivers = service.GetAvailableDrivers();
                             if (drivers.Count == 0)
                             {
                                 Console.ForegroundColor = ConsoleColor.Yellow;
