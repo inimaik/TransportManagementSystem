@@ -16,7 +16,7 @@ namespace UnitTesting
             [SetUp]
             public void Setup()
             {
-                service = new TransportManagementServiceImpl(); // Use a mock or test DB
+                service = new TransportManagementServiceImpl();
             }
 
             [Test]
@@ -27,15 +27,15 @@ namespace UnitTesting
 
                 bool result = service.AllocateDriver(tripId, driverId);
 
-                Assert.IsTrue(result, "Driver should be allocated successfully.");
+                Assert.IsTrue(result);
             }
         [Test]
-        public void TestDeallocateDriver()
+        public void TestDeallocateDriver_Sucess()
         {
-            int driverId = 1;
-            bool result = service.DeallocateDriver(driverId);
+            int tripId = 1;
+            bool result = service.DeallocateDriver(tripId);
 
-            Assert.IsTrue(result, "Driver should be allocated successfully.");
+            Assert.IsTrue(result);
         }
 
             [Test]
@@ -43,9 +43,9 @@ namespace UnitTesting
             {
                 Vehicle vehicle = new Vehicle
                 {
-                    Model = "Tata Bus",
-                    Capacity = 40,
-                    Type = "Passenger",
+                    Model = "Ashok Leyland",
+                    Capacity = 30,
+                    Type = "Truck",
                     Status = "Available"
                 };
 
@@ -63,10 +63,19 @@ namespace UnitTesting
 
                 bool result = service.BookTrip(tripId, passengerId, bookingDate);
 
-                Assert.IsTrue(result, "Booking should succeed.");
+                Assert.IsTrue(result);
             }
+        [Test]
+        public void TestBookTrip_InvalidTrip_ThrowsException()
+        {
+            int invalidTripId = 999;
+            int passengerId = 1;
+            string bookingDate = "2025-06-26";
 
-            [Test]
+            Assert.Throws<TripNotFoundException>(() => service.BookTrip(invalidTripId, passengerId, bookingDate));
+        }
+
+        [Test]
             public void TestVehicleNotFound_ThrowsException()
             {
                 Vehicle vehicle = new Vehicle
@@ -77,8 +86,6 @@ namespace UnitTesting
                     Capacity = 10,
                     Status = "Maintenance"
                 };
-
-                // Act + Assert
                 Assert.Throws<VehicleNotFoundException>(() => service.UpdateVehicle(vehicle));
             }
 

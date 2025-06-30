@@ -365,7 +365,41 @@ namespace Dao
                                   .Where(d => d.Status == "Available")
                                   .ToList();
                 }
+        }
+        #endregion
+
+        #region DisplayTripsWithRoutes
+        public List<Dictionary<string, object>> GetAllTripsWithRoutes()
+        {
+            List<Dictionary<string, object>> results = new List<Dictionary<string, object>>();
+
+            using (SqlConnection con = new SqlConnection(DBPropertyUtil.GetConnectionString()))
+            {
+                con.Open();
+
+                string query = @"SELECT t.TripId, t.Status, r.RouteId, r.StartDestination, r.EndDestination, r.Distance FROM Trips t
+            JOIN Routes r ON t.RouteId = r.RouteId";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var row = new Dictionary<string, object>();
+
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            row[reader.GetName(i)] = reader.GetValue(i);
+                        }
+
+                        results.Add(row);
+                    }
+                }
+            }
+
+            return results;
         } 
         #endregion
+
     }
 }

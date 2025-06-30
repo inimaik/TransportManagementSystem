@@ -36,9 +36,7 @@ namespace TransportManagementSystem.Menu
                 WriteCentered(line);
             Console.ResetColor();
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            WriteCentered("Enter your choice: ");
-            Console.ResetColor();
+            
         } 
         #endregion
 
@@ -56,7 +54,8 @@ namespace TransportManagementSystem.Menu
                     "╠════════════════════════════════════╣",
                     "║ 1. Schedule Trip                   ║",
                     "║ 2. Cancel Trip                     ║",
-                    "║ 3. Back to Main Menu               ║",
+                    "║ 3. Display trips with routes       ║",
+                    "║ 4. Back to Main Menu               ║",
                     "╚════════════════════════════════════╝"
                 };
 
@@ -66,14 +65,12 @@ namespace TransportManagementSystem.Menu
                 Console.ResetColor();
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                WriteCentered("Enter your choice: ");
+                int choice = GetIntInput("Enter ur choice: ");
                 Console.ResetColor();
 
-                string input = Console.ReadLine();
-
-                switch (input)
+                switch (choice)
                 {
-                    case "1":
+                    case 1:
                         try
                         {
                             Console.Clear();
@@ -119,7 +116,7 @@ namespace TransportManagementSystem.Menu
                         }
                         WriteCentered("Returning ");
                         break;
-                    case "2":
+                    case 2:
                         try
                         {
                             Console.Clear();
@@ -153,7 +150,42 @@ namespace TransportManagementSystem.Menu
 
                         WriteCentered("Returning");
                         break;
-                    case "3":
+                    case 3:
+                        try {
+                            Console.Clear();
+                            WriteCentered("Display trips with routes");
+                            var tripRoutes = service.GetAllTripsWithRoutes();
+
+                            if (tripRoutes.Count == 0)
+                            {
+                                Console.WriteLine("No trip records found.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("----------------------------------------------------------");
+                                Console.WriteLine("TripId | Status |RouteId | Source | Destination | Distance");
+                                Console.WriteLine("----------------------------------------------------------");
+                                foreach (var row in tripRoutes)
+                                {
+                                    Console.WriteLine($"  {row["TripId"]}  |  {row["Status"]}  |  {row["RouteId"]}  |  {row["StartDestination"]}  |  {row["EndDestination"]}  |  {row["Distance"]}");
+                                }
+                            }
+                        }
+                        catch (SqlException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Database error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            Console.ResetColor();
+                        }
+                        WriteCentered("Returning");
+                        break;
+                    case 4:
                         WriteCentered("Returning to main menu...");
                         return;
                     default:
@@ -163,7 +195,7 @@ namespace TransportManagementSystem.Menu
                         break;
                 }
 
-                Console.WriteLine("\nPress any key to return...");//will decide whether to keep it
+                Console.WriteLine("\nPress any key to return...");
                 Console.ReadKey();
             }
         } 
@@ -194,14 +226,12 @@ namespace TransportManagementSystem.Menu
                 Console.ResetColor();
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                WriteCentered("Enter your choice: ");
+                int choice = GetIntInput("Enter ur choice: ");
                 Console.ResetColor();
 
-                string input = Console.ReadLine();
-
-                switch (input)
+                switch (choice)
                 {
-                    case "1":
+                    case 1:
                         try
                         {
                             Vehicle newVehicle = new Vehicle();
@@ -225,12 +255,6 @@ namespace TransportManagementSystem.Menu
                             Console.WriteLine(added ? "Vehicle added successfully." : "Failed to add vehicle.");
                             Console.ResetColor();
                         }
-                        catch (FormatException ex)// check if this is necessary
-                        {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Input error: " + ex.Message);
-                            Console.ResetColor();
-                        }
                         catch (SqlException ex)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -245,7 +269,7 @@ namespace TransportManagementSystem.Menu
                         }
                         WriteCentered("Returning back");
                         break;
-                    case "2":
+                    case 2:
                         try
                         {
                             Console.Clear();
@@ -286,7 +310,7 @@ namespace TransportManagementSystem.Menu
                         }
                         WriteCentered("Returning");
                         break;
-                    case "3":
+                    case 3:
                         try
                         {
                             Console.Clear();
@@ -316,7 +340,7 @@ namespace TransportManagementSystem.Menu
                         }
                         WriteCentered("Returning");
                         break;
-                    case "4":
+                    case 4:
                         WriteCentered("Returning to main menu...");
                         return;
                     default:
@@ -325,7 +349,7 @@ namespace TransportManagementSystem.Menu
                         Console.ResetColor();
                         break;
                 }
-                Console.WriteLine("\nPress any key to return...");// will decide later based on ui
+                Console.WriteLine("\nPress any key to return...");
                 Console.ReadKey();
             }
         } 
@@ -357,14 +381,12 @@ namespace TransportManagementSystem.Menu
                 Console.ResetColor();
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                WriteCentered("Enter your choice: ");
+                int choice = GetIntInput("Enter ur choice: ");
                 Console.ResetColor();
 
-                string input = Console.ReadLine();
-
-                switch (input)
+                switch (choice)
                 {
-                    case "1":
+                    case 1:
                         try
                         {
                             Console.Clear();
@@ -414,7 +436,7 @@ namespace TransportManagementSystem.Menu
                         
                         WriteCentered("Returning");
                         break;
-                    case "2":
+                    case 2:
                         try
                         {
                             Console.Clear();
@@ -447,7 +469,7 @@ namespace TransportManagementSystem.Menu
                         }
                         WriteCentered("Returning");
                         break;
-                    case "3":
+                    case 3:
                         try
                         {
                             Console.Clear();
@@ -468,7 +490,7 @@ namespace TransportManagementSystem.Menu
                                 WriteCentered("Bookings Found:");
                                 Console.ResetColor();
                                 Console.WriteLine("----------------------------------------------------");
-                                Console.WriteLine("BookingID | TripID | PassengerID |   Date   | Status");// can be adjusted
+                                Console.WriteLine("BookingID | TripID | PassengerID |   Date   | Status");
                                 Console.WriteLine("----------------------------------------------------");
 
                                 foreach (var booking in bookings)
@@ -498,7 +520,7 @@ namespace TransportManagementSystem.Menu
 
                         WriteCentered("Returning...");
                         break;
-                    case "4":
+                    case 4:
                         try
                         {
                             Console.Clear();
@@ -519,7 +541,7 @@ namespace TransportManagementSystem.Menu
                                 WriteCentered("Bookings Found:");
                                 Console.ResetColor();
                                 Console.WriteLine("----------------------------------------------------");
-                                Console.WriteLine("BookingID | TripID | PassengerID |   Date   | Status");// can be adjusted
+                                Console.WriteLine("BookingID | TripID | PassengerID |   Date   | Status");
                                 Console.WriteLine("----------------------------------------------------");
 
                                 foreach (var booking in bookings)
@@ -549,7 +571,7 @@ namespace TransportManagementSystem.Menu
 
                         WriteCentered("Returning...");
                         break;
-                    case "5":
+                    case 5:
                         WriteCentered("Returning to main menu...");
                         return;
                     default:
@@ -559,14 +581,14 @@ namespace TransportManagementSystem.Menu
                         break;
                 }
 
-                Console.WriteLine("\nPress any key to return..."); //will decide whether to keep it
+                Console.WriteLine("\nPress any key to return...");
                 Console.ReadKey();
             }
         } 
         #endregion
 
         #region DriverMenu
-        public void ShowDriverMenu()//handle input and exceptions too
+        public void ShowDriverMenu()
         {
             while (true)
             {
@@ -590,14 +612,12 @@ namespace TransportManagementSystem.Menu
                 Console.ResetColor();
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                WriteCentered("Enter your choice: ");
+                int choice = GetIntInput("Enter ur choice: ");
                 Console.ResetColor();
 
-                string input = Console.ReadLine();
-
-                switch (input)
+                switch (choice)
                 {
-                    case "1":
+                    case 1:
                         try
                         {
                             Console.Clear();
@@ -645,7 +665,7 @@ namespace TransportManagementSystem.Menu
 
                         WriteCentered("Returning");
                         break;
-                    case "2":
+                    case 2:
                         try
                         {
                             Console.Clear();
@@ -691,7 +711,7 @@ namespace TransportManagementSystem.Menu
                         
                         WriteCentered("Returning");
                         break;
-                    case "3":
+                    case 3:
                         try
                         {
                             Console.Clear();
@@ -709,9 +729,9 @@ namespace TransportManagementSystem.Menu
                                 Console.ForegroundColor = ConsoleColor.Cyan;
                                 WriteCentered("Available Drivers:");
                                 Console.ResetColor();
-                                Console.WriteLine("----------------------------------------------------");
-                                Console.WriteLine("DriverID |     Name     |  License Number |  Status ");
-                                Console.WriteLine("----------------------------------------------------");
+                                Console.WriteLine("---------------------------------------------");
+                                Console.WriteLine("DriverID |  Name |  License Number |  Status ");
+                                Console.WriteLine("---------------------------------------------");
 
                                 foreach (var driver in drivers)
                                 {
@@ -734,7 +754,7 @@ namespace TransportManagementSystem.Menu
 
                         WriteCentered("Returning...");
                         break;
-                    case "4":
+                    case 4:
                         WriteCentered("Returning to main menu...");
                         return;
                     default:
@@ -744,14 +764,14 @@ namespace TransportManagementSystem.Menu
                         break;
                 }
 
-                Console.WriteLine("\nPress any key to return...");//Will decide if it needs to be kept
+                Console.WriteLine("\nPress any key to return...");
                 Console.ReadKey();
             }
         } 
         #endregion
 
         #region WriteCentered
-        public static void WriteCentered(string line)
+        public  void WriteCentered(string line)
         {
             int padding = (Console.WindowWidth - line.Length) / 2;
             if (padding < 0) padding = 0; // Just in case
@@ -765,32 +785,6 @@ namespace TransportManagementSystem.Menu
         {
             for (int i = 0; i < lines; i++)
                 Console.WriteLine();
-        }
-        #endregion
-
-        #region ChoiceValidation
-        public int ReadChoice(int min, int max)
-        {
-            while (true)
-            {
-                string input = Console.ReadLine();
-
-                if (int.TryParse(input, out int choice))
-                {
-                    if (choice >= min && choice <= max)
-                        return choice;
-
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Please enter a number between {min} and {max}.");
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid input. Please enter a number.");
-                    Console.ResetColor();
-                }
-            }
         }
         #endregion
 

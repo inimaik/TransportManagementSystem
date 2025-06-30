@@ -18,8 +18,9 @@ namespace TransportManagementSystem
             while (true)
             {
                 menu.ShowMainMenu();
-                int choice = menu.ReadChoice(1, 5);
-                //string choice = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.Green;
+                int choice = menu.GetIntInput("Enter a choice: ");
+                Console.ResetColor();
                 switch (choice)
                 {
                     case 1:
@@ -39,6 +40,11 @@ namespace TransportManagementSystem
                         Console.WriteLine("\nThank you for using the system. Goodbye!");
                         Console.ResetColor();
                         return;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        menu.WriteCentered("Invalid choice. Please try again.");
+                        Console.ResetColor();
+                        break;
                 }
             }
         }

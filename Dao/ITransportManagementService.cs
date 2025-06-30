@@ -21,6 +21,7 @@ namespace Dao
         List<Booking> GetBookingsByPassenger(int passengerId);
         List<Booking> GetBookingsByTrip(int tripId);
         List<Driver> GetAvailableDrivers();
+        List<Dictionary<string, object>> GetAllTripsWithRoutes();
 
     }
 }
