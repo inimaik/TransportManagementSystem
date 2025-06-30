@@ -234,9 +234,9 @@ namespace TransportManagementSystem.Menu
                     case 1:
                         try
                         {
+                            Console.Clear();
+                            WriteCentered("Add Vehicle");
                             Vehicle newVehicle = new Vehicle();
-
-                            newVehicle.VehicleID = GetIntInput("Enter Vehicle ID: ");
 
                             Console.Write("Enter Vehicle Model: ");
                             newVehicle.Model = Console.ReadLine();
@@ -244,7 +244,6 @@ namespace TransportManagementSystem.Menu
                             Console.Write("Enter Vehicle Type: ");
                             newVehicle.Type = Console.ReadLine();
 
-                            Console.Write("Enter Capacity: ");
                             newVehicle.Capacity = GetIntInput("Enter Capactity: ");
 
                             Console.Write("Enter Status: ");

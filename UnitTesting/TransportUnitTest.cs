@@ -22,8 +22,8 @@ namespace UnitTesting
             [Test]
             public void TestAllocateDriver_Success()
             {
-                int tripId = 1;  
-                int driverId = 1; 
+                int tripId = 3;  
+                int driverId = 4; 
 
                 bool result = service.AllocateDriver(tripId, driverId);
 
@@ -32,7 +32,7 @@ namespace UnitTesting
         [Test]
         public void TestDeallocateDriver_Sucess()
         {
-            int tripId = 1;
+            int tripId = 2;
             bool result = service.DeallocateDriver(tripId);
 
             Assert.IsTrue(result);
@@ -43,8 +43,8 @@ namespace UnitTesting
             {
                 Vehicle vehicle = new Vehicle
                 {
-                    Model = "Ashok Leyland",
-                    Capacity = 30,
+                    Model = "Eicher",
+                    Capacity = 20,
                     Type = "Truck",
                     Status = "Available"
                 };
@@ -57,9 +57,9 @@ namespace UnitTesting
             [Test]
             public void TestBookTrip_Success()
             {
-                int tripId = 1;   
-                int passengerId = 1;
-                string bookingDate = "2025-06-26";
+                int tripId = 2;   
+                int passengerId = 4;
+                string bookingDate = "2025-06-27";
 
                 bool result = service.BookTrip(tripId, passengerId, bookingDate);
 

@@ -42,8 +42,10 @@ namespace TransportManagementSystem
                         return;
                     default:
                         Console.ForegroundColor = ConsoleColor.Red;
-                        menu.WriteCentered("Invalid choice. Please try again.");
+                        Console.WriteLine("Invalid choice. Please try again.");
                         Console.ResetColor();
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey();
                         break;
                 }
             }
